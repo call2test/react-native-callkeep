@@ -117,6 +117,8 @@ public class RNCallKeepModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void setup(ReadableMap options) {
 
+        this._settings = options;
+
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if(_settings.hasKey("allowSelfManaged") && _settings.getBoolean("allowSelfManaged")) {
                 permissions = new String[]{ Manifest.permission.RECORD_AUDIO };
@@ -127,7 +129,6 @@ public class RNCallKeepModule extends ReactContextBaseJavaModule {
         }
 
         VoiceConnectionService.setAvailable(false);
-        this._settings = options;
 
         if (isConnectionServiceAvailable()) {
             this.registerPhoneAccount(this.getAppContext());
