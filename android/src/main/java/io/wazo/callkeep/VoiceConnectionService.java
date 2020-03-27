@@ -26,8 +26,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.Voice;
-import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.telecom.CallAudioState;
 import android.telecom.Connection;
 import android.telecom.ConnectionRequest;
@@ -125,15 +125,30 @@ public class VoiceConnectionService extends ConnectionService {
 
     @Override
     public Connection onCreateIncomingConnection(PhoneAccountHandle connectionManagerPhoneAccount, ConnectionRequest request) {
+        Log.d(TAG, "oncreateincoming request: " + request.toString());
+        Boolean isForeground = VoiceConnectionService.isRunning(this.getApplicationContext());
         Bundle extra = request.getExtras();
         Uri number = request.getAddress();
+        String extrasUuid = extra.getString(EXTRA_CALL_UUID);
         String name = extra.getString(EXTRA_CALLER_NAME);
+        if (!isForeground) {
+            Log.d(TAG, "onCreateIncomingConnection: Waking up application");
+            this.wakeUpApplication(extrasUuid, number.toString(), name);
+        }
         Connection incomingCallConnection = createConnection(request);
+        Log.d(TAG, "ringing");
         incomingCallConnection.setRinging();
         incomingCallConnection.setInitialized();
 
         return incomingCallConnection;
     }
+
+    @Override
+    public void onCreateIncomingConnectionFailed(PhoneAccountHandle connectionManagerPhoneAccount, ConnectionRequest request) {
+        Log.i(TAG, "onCreateIncomingConnectionFailed");
+        super.onCreateIncomingConnectionFailed(connectionManagerPhoneAccount, request);
+    }
+
 
     @Override
     public Connection onCreateOutgoingConnection(PhoneAccountHandle connectionManagerPhoneAccount, ConnectionRequest request) {

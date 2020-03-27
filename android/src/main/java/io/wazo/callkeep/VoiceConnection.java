@@ -23,8 +23,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.telecom.CallAudioState;
 import android.telecom.Connection;
 import android.telecom.DisconnectCause;
@@ -188,6 +188,12 @@ public class VoiceConnection extends Connection {
     public void onShowIncomingCallUi() {
         Log.d(TAG, "onShowIncomingCallUi()");
         sendCallRequestToActivity(ACTION_SHOW_INCOMING_CALL_UI, handle);
+//        try {
+//            ((VoiceConnectionService) context).deinitConnection(handle.get(EXTRA_CALL_UUID));
+//        } catch(Throwable exception) {
+//            Log.e(TAG, "Handle map error", exception);
+//        }
+//        destroy();
     }
 
     @Override
