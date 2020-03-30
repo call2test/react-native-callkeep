@@ -20,11 +20,15 @@ package io.wazo.callkeep;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import android.os.Vibrator;
 import android.telecom.CallAudioState;
 import android.telecom.Connection;
 import android.telecom.DisconnectCause;
@@ -37,6 +41,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import static android.telecom.CallAudioState.ROUTE_SPEAKER;
 import static io.wazo.callkeep.RNCallKeepModule.ACTION_ANSWER_CALL;
 import static io.wazo.callkeep.RNCallKeepModule.ACTION_AUDIO_SESSION;
 import static io.wazo.callkeep.RNCallKeepModule.ACTION_DTMF_TONE;
@@ -57,6 +62,8 @@ public class VoiceConnection extends Connection {
     private HashMap<String, String> handle;
     private Context context;
     private static final String TAG = "RNCK:VoiceConnection";
+    private Ringtone callRingtone;
+    private Vibrator callVibrate;
 
     VoiceConnection(Context context, HashMap<String, String> handle) {
         super();
@@ -101,6 +108,9 @@ public class VoiceConnection extends Connection {
         setConnectionCapabilities(getConnectionCapabilities() | Connection.CAPABILITY_HOLD);
         setAudioModeIsVoip(true);
 
+        callRingtone.stop();
+        callVibrate.cancel();
+
         sendCallRequestToActivity(ACTION_ANSWER_CALL, handle);
         sendCallRequestToActivity(ACTION_AUDIO_SESSION, handle);
         Log.d(TAG, "onAnswer executed");
@@ -121,6 +131,8 @@ public class VoiceConnection extends Connection {
         super.onDisconnect();
         setDisconnected(new DisconnectCause(DisconnectCause.LOCAL));
         sendCallRequestToActivity(ACTION_END_CALL, handle);
+        callRingtone.stop();
+        callVibrate.cancel();
         Log.d(TAG, "onDisconnect executed");
         try {
             ((VoiceConnectionService) context).deinitConnection(handle.get(EXTRA_CALL_UUID));
@@ -187,6 +199,15 @@ public class VoiceConnection extends Connection {
     @Override
     public void onShowIncomingCallUi() {
         Log.d(TAG, "onShowIncomingCallUi()");
+
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        callRingtone = RingtoneManager.getRingtone(context, notification);
+        callRingtone.play();
+
+        long[] pattern = {0,300,200,300,500};
+        callVibrate = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        callVibrate.vibrate(pattern, 0);
+
         sendCallRequestToActivity(ACTION_SHOW_INCOMING_CALL_UI, handle);
 //        try {
 //            ((VoiceConnectionService) context).deinitConnection(handle.get(EXTRA_CALL_UUID));
@@ -201,6 +222,7 @@ public class VoiceConnection extends Connection {
         super.onReject();
         setDisconnected(new DisconnectCause(DisconnectCause.REJECTED));
         sendCallRequestToActivity(ACTION_END_CALL, handle);
+        callRingtone.stop();
         Log.d(TAG, "onReject executed");
         try {
             ((VoiceConnectionService) context).deinitConnection(handle.get(EXTRA_CALL_UUID));

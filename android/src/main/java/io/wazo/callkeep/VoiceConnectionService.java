@@ -21,6 +21,8 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.Context;
 import android.content.ComponentName;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -134,12 +136,12 @@ public class VoiceConnectionService extends ConnectionService {
         if (!isForeground) {
             Log.d(TAG, "onCreateIncomingConnection: Waking up application");
             this.wakeUpApplication(extrasUuid, number.toString(), name);
+        } else {
+            Log.d(TAG, "oncreateincoming in foreground");
         }
         Connection incomingCallConnection = createConnection(request);
-        Log.d(TAG, "ringing");
-        incomingCallConnection.setRinging();
+        Log.d(TAG, "oncreateincoming ringing");
         incomingCallConnection.setInitialized();
-
         return incomingCallConnection;
     }
 
