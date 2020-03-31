@@ -209,12 +209,6 @@ public class VoiceConnection extends Connection {
         callVibrate.vibrate(pattern, 0);
 
         sendCallRequestToActivity(ACTION_SHOW_INCOMING_CALL_UI, handle);
-//        try {
-//            ((VoiceConnectionService) context).deinitConnection(handle.get(EXTRA_CALL_UUID));
-//        } catch(Throwable exception) {
-//            Log.e(TAG, "Handle map error", exception);
-//        }
-//        destroy();
     }
 
     @Override

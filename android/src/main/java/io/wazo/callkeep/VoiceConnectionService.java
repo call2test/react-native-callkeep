@@ -140,7 +140,6 @@ public class VoiceConnectionService extends ConnectionService {
             Log.d(TAG, "oncreateincoming in foreground");
         }
         Connection incomingCallConnection = createConnection(request);
-        Log.d(TAG, "oncreateincoming ringing");
         incomingCallConnection.setInitialized();
         return incomingCallConnection;
     }
