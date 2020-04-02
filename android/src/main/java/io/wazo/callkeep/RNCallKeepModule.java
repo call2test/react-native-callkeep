@@ -154,21 +154,7 @@ public class RNCallKeepModule extends ReactContextBaseJavaModule {
         extras.putString(EXTRA_CALLER_NAME, callerName);
         extras.putString(EXTRA_CALL_UUID, uuid);
 
-        if (telecomManager.isInCall()) {
-            Log.d(TAG, "is in call");
-        }
-
-        if (telecomManager.isIncomingCallPermitted(handle) == false) {
-            Log.d(TAG, "not permitted ending  calls");
-            Map<String, VoiceConnection> currentConnections = VoiceConnectionService.currentConnections;
-            Log.d(TAG, currentConnections.toString());
-            for (Map.Entry<String, VoiceConnection> connectionEntry : currentConnections.entrySet()) {
-                Connection connectionToEnd = connectionEntry.getValue();
-                connectionToEnd.onDisconnect();
-            }
-        } else {
-            telecomManager.addNewIncomingCall(handle, extras);
-        }
+        telecomManager.addNewIncomingCall(handle, extras);
     }
 
     @ReactMethod
