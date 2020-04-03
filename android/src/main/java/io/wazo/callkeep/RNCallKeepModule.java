@@ -37,6 +37,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import android.provider.Settings;
 import android.telecom.CallAudioState;
 import android.telecom.Connection;
 import android.telecom.DisconnectCause;
@@ -122,6 +124,14 @@ public class RNCallKeepModule extends ReactContextBaseJavaModule {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if(_settings.hasKey("allowSelfManaged") && _settings.getBoolean("allowSelfManaged")) {
                 permissions = new String[]{ Manifest.permission.RECORD_AUDIO };
+
+                Context context = this.getAppContext();
+
+                if (!Settings.canDrawOverlays(context)) {
+                    Intent myIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + context.getPackageName()));
+                    myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(myIntent);
+                }
             }
             else {
                 permissions = new String[]{ Manifest.permission.READ_PHONE_STATE, Manifest.permission.CALL_PHONE, Manifest.permission.RECORD_AUDIO };
