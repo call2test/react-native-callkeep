@@ -173,6 +173,8 @@ public class VoiceConnection extends Connection {
         super.onAbort();
         setDisconnected(new DisconnectCause(DisconnectCause.REJECTED));
         sendCallRequestToActivity(ACTION_END_CALL, handle);
+        callRingtone.stop();
+        callVibrate.cancel();
         Log.d(TAG, "onAbort executed");
         try {
             ((VoiceConnectionService) context).deinitConnection(handle.get(EXTRA_CALL_UUID));
@@ -217,6 +219,7 @@ public class VoiceConnection extends Connection {
         setDisconnected(new DisconnectCause(DisconnectCause.REJECTED));
         sendCallRequestToActivity(ACTION_END_CALL, handle);
         callRingtone.stop();
+        callVibrate.cancel();
         Log.d(TAG, "onReject executed");
         try {
             ((VoiceConnectionService) context).deinitConnection(handle.get(EXTRA_CALL_UUID));
