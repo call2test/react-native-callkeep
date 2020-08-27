@@ -59,6 +59,7 @@ const checkReachability = handler =>
 
 const showIncomingCallUi = handler =>
   eventEmitter.addListener(RNCallKeepShowIncomingCallUi, (data) => handler(data));
+  
 const didLoadWithEvents = handler =>
   eventEmitter.addListener(RNCallKeepDidLoadWithEvents, handler);
 
