@@ -9,7 +9,8 @@ export type Events =
   'didPerformDTMFAction' |
   'didResetProvider' |
   'checkReachability' |
-  'didPerformSetMutedCallAction';
+  'didPerformSetMutedCallAction' |
+  'didLoadWithEvents';
 
 type HandleType = 'generic' | 'number' | 'email';
 
@@ -43,7 +44,7 @@ export default class RNCallKeep {
 
   }
 
-  static removeEventListener(type: Events, handler: (args: any) => void) {
+  static removeEventListener(type: Events) {
 
   }
 
@@ -52,6 +53,18 @@ export default class RNCallKeep {
   }
 
   static hasDefaultPhoneAccount(): boolean {
+
+  }
+
+  static answerIncomingCall(uuid: string) {
+
+  }
+
+  static registerPhoneAccount(): void {
+
+  }
+
+  static registerAndroidEvents(): void {
 
   }
 
@@ -114,7 +127,9 @@ export default class RNCallKeep {
   static setReachable() {
 
   }
+  static isCallActive(uuid: string): Promise<boolean> {
 
+  }
   /**
      * @description supportConnectionService method is available only on Android.
   */
@@ -166,7 +181,7 @@ export default class RNCallKeep {
 
   }
 
-  static setCurrentCallActive() {
+  static setCurrentCallActive(callUUID: string) {
 
   }
 

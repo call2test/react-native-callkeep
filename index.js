@@ -1,6 +1,6 @@
 import { NativeModules, Platform, Alert } from 'react-native';
 
-import { listeners } from './actions'
+import { listeners, emit } from './actions'
 
 const RNCallKeepModule = NativeModules.RNCallKeep;
 const isIOS = Platform.OS === 'ios';
@@ -22,6 +22,12 @@ class RNCallKeep {
 
   constructor() {
     this._callkeepEventHandlers = new Map();
+
+    this.addEventListener('didLoadWithEvents', (events) => {
+      events.forEach(event => {
+        emit(event.name, event.data);
+      });
+    });
   }
 
   addEventListener = (type, handler) => {
@@ -48,6 +54,21 @@ class RNCallKeep {
     return this._setupIOS(options.ios);
   };
 
+  registerPhoneAccount = () => {
+    if (isIOS) {
+      return;
+    }
+    RNCallKeepModule.registerPhoneAccount();
+  };
+
+
+  registerAndroidEvents = () => {
+    if (isIOS) {
+      return;
+    }
+    RNCallKeepModule.registerEvents();
+  };
+
   hasDefaultPhoneAccount = async (options) => {
     if (!isIOS) {
       return this._hasDefaultPhoneAccount(options);
@@ -56,7 +77,7 @@ class RNCallKeep {
     return;
   };
 
-  displayIncomingCall = (uuid, handle, localizedCallerName, handleType = 'number', hasVideo = false) => {
+  displayIncomingCall = (uuid, handle, localizedCallerName = '', handleType = 'number', hasVideo = false) => {
     if (!isIOS) {
       RNCallKeepModule.displayIncomingCall(uuid, handle, localizedCallerName);
       return;
@@ -107,6 +128,8 @@ class RNCallKeep {
       RNCallKeepModule.endCall(uuid);
     }
   };
+
+  isCallActive = async(uuid) => await RNCallKeepModule.isCallActive(uuid);
 
   endCall = (uuid) => RNCallKeepModule.endCall(uuid);
 
